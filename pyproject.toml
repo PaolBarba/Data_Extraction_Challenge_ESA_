@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 
 [project]
-name = "Data_Discovery"
+name = "Data_Extraction"
 description =  "Rag development for PENGUINGPT."
 readme = "README.md"
 requires-python =">=3.10"
@@ -33,7 +33,7 @@ dev = [
 ]
 
 [tool.hatch.version]
-path = "src/Data_Discovery/__init__.py"
+path = "src/Data_Extraction/__init__.py"
 
 [tool.ruff]
 line-length = 120
