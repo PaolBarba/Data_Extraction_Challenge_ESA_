@@ -11,7 +11,7 @@ from google.api_core.exceptions import ResourceExhausted
 from google.generativeai.types import generation_types
 from utils import load_config_yaml
 
-from Data_Discovery.prompts.base_prompt import base_prompt_template, web_scraping_prompt
+from Data_Extraction.prompts.base_prompt import base_prompt_template, web_scraping_prompt
 
 # Configurazione logging
 logging.basicConfig(

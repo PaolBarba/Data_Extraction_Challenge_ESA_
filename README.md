@@ -1,133 +1,72 @@
-# Data Discovery Challenge - ESA
+# Starting Kit
 
-A modular pipeline for dataset discovery and submission, built for the European Space Agency's data challenge. This project integrates scraping, prompt engineering, model interaction, and a submission framework.
+This starting kit is here to help you with preparing the submission.zip file.
 
----
+It contains the following files:
 
-## 📁 Project Structure
+- This `README.md` file
 
-```text
+- A `extraction.csv` file containing a sample of the extraction.csv file
+  that you will have to submit
 
-Data_Discovery_Challenge_ESA_/
-├── src/
-│   ├── Data_Discovery/
-│   │   ├── cleaning/                   # Cleaning files
-│   │   │   ├── cleaning.py
-│   │   ├── config/                     # Configuration files
-│   │   │   ├── data_preparation_config/
-│   │   │   │   └── config.yaml
-│   │   │   ├── model_config/
-│   │   │   │   └── config.yaml
-│   │   │   │   └── .env
-│   │   │   ├── scraping_config/
-│   │   │   │   └── config.yaml
-│   │   │   └── submission_config/
-│   │   │       └── config.yaml
-│   │   ├── model/                      # Model scripts
-│   │   │   ├── __init__.py
-│   │   │   ├── prompt_generator.py
-│   │   │   ├── prompt_tuner.py
-│   │   │   └── result_validator.py
-│   │   ├── notebooks/                  # Jupyter notebooks
-│   │   │   └── eda.ipynb
-│   │   ├── prompts/                    # Prompt engineering scripts
-│   │   │   ├── __init__.py
-│   │   │   ├── base_prompt.py
-│   │   │   ├── prompt_improving.py
-│   │   │   └── validation_prompt.py
-│   │   ├── scraping/                   # Web scraping logic
-│   │   │   ├── __init__.py
-│   │   │   ├── financial_source_finder.py
-│   │   │   ├── scraping_challenge.py
-│   │   │   └── web_scarper.py
-│   │   │   └── README.md
-│   │   ├── submission/                 # Submission-related code
-│   │   │   ├── __init__.py
-│   │   │   ├── submission.py
-│   │   ├── main.py                     # Main entry point
-│   │   ├── submit.py                   # Submission script
-│   │   └── utils.py                    # Shared utility functions
-├── submission/                         # Submission files
-│   ├── submission.csv                  # Submission CSV file
-├── .gitignore
-├── LICENSE                             # Project license
-├── .gitlab-ci.yml                      # GitLab CI/CD configuration
-├── .pre-commit-config.yaml             # Pre-commit configuration
-├── CONTRIBUTING.md                     # Contribution guidelines
-├── discovery_approach.docx             # Discovery approach documentation
-├── LICENSE                             # Project license
-├── pyproject.toml                      # Project metadata and dependencies
-└── README.md                           # Project documentation
+- A `extraction_approach_description.docx` file, used to describe the
+  approach you used to generate the `extraction.csv` file
+
+## Structure of the `submission.zip` file
+
+The submission.zip file should only contain the following files:
 
 ```
+submission.zip
+├── extraction.csv
+├── extraction_approach_description.docx
+└── code.zip
+```
+
+Where the `code.zip` file contains the code used to generate the `extraction.csv`
+file.
+
+> NOTE: DO NOT CHANGE THE NAMES OF THE FILES OR THE STRUCTURE OF THE `submission.zip`
+> FILE.
+
+To compete for the Accuracy, Reusability and Innovativeness Awards, you need to submit the
+`extraction.csv` file, the `extraction_approach_description.docx` file, and the `code.zip`
+file. All three files are required to compete for either of the awards.
 
 
+## Structure of the `extraction.csv` file
 
-This document briefly describes the main functions of the Python script for the automatic search of financial sources for multinational enterprises (MNEs).
+The `extraction.csv` file should contain the following columns:
 
-## Project Objective
+- `ID`: the technical ID of the Multinational Enterprise (MNE) group
+- `NAME`: the name of the Multinational Enterprise (MNE) group
+- `VARIABLE`: the variable to be extracted
+- `SRC`: the source of the information in URL format
+- `VALUE`: the extracted financial data
+- `CURRENCY`: the currency when applicable
+- `REFYEAR`: the reference year of the extracted information
 
-The script aims to automatically identify, for a provided list of companies:
+> NOTE: The `extraction.csv` file SHOULD contain the header.
 
-1. The **direct URL** to the most recent and specific financial source (e.g., annual report PDF, SEC filing page).
-2. The **fiscal year** associated with the retrieved data.
+Teams are required to extract annual financial data for 200 MNE Group cases with unique technical IDs and NAMEs. The ID and NAME for a unique case appears in 6 consecutive rows. The teams are required to extract the financial data [VALUE] as identified in column 3 [VARIABLE], provide the source of that information [SRC], the currency when applicable [CURRENCY] and the reference year T of the extracted information [REFYEAR]. When applicable, the [VALUE] must be provided as a full integer number.
 
-It uses an iterative approach that combines Web Scraping and AI model calls (Google Gemini) for search, validation, and automatic prompt optimization.
+The value of the variable must correspond to the following information:
 
-## Main Components (Classes)
+- Country of the MNE Group (specifically, the country where the headquarter of the MNE Group is established). The value of the country should be listed in ISO 3166-1 alpha-2 (2-character code).
 
-The code is structured into the following main classes:
+- Number of employees of the MNE Group worldwide for the reference year T.
+- Net turnover of the MNE Group for the reference year T expressed in nominal value. This value should be an integer.
+- Total assets of the MNE group for reference year T expressed in nominal value. This value should be an integer.
+- Website of the MNE Group (e.g. the Website of the MNE group).
+- The main activity of the MNE Group according to NACE codes [7]; Activity: 3-character code of original NACE v2 activity code. It should follow the code list original (un-updated) NACE v2. In other words, it should NOT be filled in with NACE v2.1. The 3-character string will be evaluated from left to right, meaning that strings shorter than 3 characters are admissible (thus, submitting e.g. only section would be admissible; "A" would be an example of such a submission).
 
-### `WebScraperModule`
+Along with the value of the variable, the team must also provide the following:
 
-- **Purpose:** Handle all web scraping operations.
-- **Key Functions:**
-  - Find the company's official website.
-  - Locate the "Investor Relations" (IR) page.
-  - Extract links to financial reports (PDFs, etc.) from web pages.
-  - Utilizes `requests` and `BeautifulSoup`, with retry handling and user-agent rotation.
-
-### `PromptGenerator`
-
-- **Purpose:** Dynamically create and optimize prompts sent to the AI for source searching.
-- **Key Functions:**
-  - Generates the initial prompt based on a template and company-specific information (if available).
-  - Iteratively modifies the prompt (`optimize_prompt`) based on feedback received from the `Validator`, asking another AI instance to suggest improvements.
-
-### `FinancialSourceFinder`
-
-- **Purpose:** Orchestrate the entire workflow.
-- **Key Functions:**
-  - Initializes the other modules.
-  - Loads the list of companies from a CSV file.
-  - Manages parallel execution (`run`, `ThreadPoolExecutor`) for each company (`process_company`).
-  - Coordinates the search → validation → optimization loop.
-  - Saves the final results (`save_results`) in a CSV file.
-
-## General Workflow
-
-For each company in the input list:
-
-1. **(Setup):** An initial prompt is generated and preliminary scraping is performed to gather reference data.
-2. **(Iterative Loop - max `N` times):**
-   - **Search:** The AI (`gemini-pro`) is queried with the current prompt to find the URL and year.
-     - **Case 1**: The url is valid -> Save in a specific Folder
-     - **Case 2**: The url is not valid -> Re-Query the model with the errors
-     If after some retry the url is not identified try another approach:
-     - **Generate a Scraping Script with AI**: Not yet implemented
-        It will query the model in order to generate a script to scrape financial data and save in the specific folder
-    If after some retry the url is not valid try another approach:
-    - **Naive search** Not yet implemented
-   - **Parsing:** The AI’s JSON response is parsed.
-
-   - **Validation:** If the AI returned a result
-     - Is the URL accessible?
-     - Relevant?
-     - Specific?
-     - Is the year correct and recent?
-   - **Decision:**
-     - If **Validated**: The result is accepted and the loop stops for that company.
-     - If **Not Validated**: The `PromptGenerator` uses the validator's feedback to ask the AI to *optimize* the prompt. The loop restarts from step (a) with the new prompt.
-3. **(Output):** The result (validated or the latest obtained after N iterations) is saved along with the validation status, received feedback, and scraping data.
-4. **Generalization**: If more than one url is valid, generalize the code in order to give more than 1 ulr.
-5. **(Final Save):** All results are consolidated and saved into a CSV file.
+- The full path source [SRC] from which the variable was extracted (e.g. the [SRC] could be the URL of the Wikipedia page).
+- The currency [CURRENCY] must be provided for monetary values only and according to ISO 4217 (https://www.iso.org/iso-4217-currency-codes.html).
+- Reference year T of extracted information [REFYEAR];
+  - The REFYEAR indicated should be the year of the final month of the financial data
+  - Examples:
+    - If the annual financial report is from Jan. 2022 – Dec. 2022, the REFYEAR is indicated as 2022.
+    - If the annual financial report is from Nov. 2022 – Nov. 2023, the REFYEAR is indicated as 2023.
+    - If the annual financial report is from Feb. 2023 – Feb. 2024, the REFYEAR is indicated as 2024.

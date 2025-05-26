@@ -1,6 +1,6 @@
 """Submission script for Data Discovery."""
 
-from Data_Discovery.submission.submission import DataDiscoverySubmission
+from Data_Extraction.submission.submission import DataDiscoverySubmission
 
 
 def main() -> None:

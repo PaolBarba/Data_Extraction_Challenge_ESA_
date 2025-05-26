@@ -13,8 +13,8 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from utils import load_config_yaml, save_code
 
-from Data_Discovery.model.prompt_generator import PromptGenerator
-from Data_Discovery.model.prompt_tuner import PromptTuner
+from Data_Extraction.model.prompt_generator import PromptGenerator
+from Data_Extraction.model.prompt_tuner import PromptTuner
 
 # Logging configuration
 logging.basicConfig(
