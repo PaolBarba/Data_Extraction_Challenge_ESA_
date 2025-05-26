@@ -12,7 +12,21 @@
     ```
 3. Create a virtual environment.
 
+   ```bash
+    python  -m venv data_discovery
+    ```
+or
+   ```bash
+    conda create --name data_discovery python=3.11
+   ```
+
 4. Activate the virtual environment.
+
+
+   ```bash
+     source data_discovery/Scripts/activate
+    ```
+
 
 2. Install the project in editable mode along with development dependencies:
     ```shell
