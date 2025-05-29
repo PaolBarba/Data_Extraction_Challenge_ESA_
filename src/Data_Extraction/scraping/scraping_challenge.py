@@ -13,8 +13,8 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from utils import load_config_yaml, save_code
 
-from Data_Extraction.model.prompt_generator import PromptGenerator
-from Data_Extraction.model.prompt_tuner import PromptTuner
+from model.prompt_generator import PromptGenerator
+from model.prompt_tuner import PromptTuner
 
 # Logging configuration
 logging.basicConfig(
@@ -38,7 +38,7 @@ class WebScraperModule:
             max_retries (int): Numero massimo di tentativi per le richieste.
         """
         self.session = requests.Session()
-        self.config = load_config_yaml("src/Data_Discovery/config/scraping_config/config.yaml")
+        self.config = load_config_yaml("src/Data_Extraction/config/scraping_config/config.yaml")
         self.timeout = self.config["timeout"]
         self.max_retries = self.config["max_retries"]
         self.prompt_generator = PromptGenerator()
@@ -80,9 +80,9 @@ class WebScraperModule:
             logger.exception("AI failed to find company website")
         return None
 
-    def ai_web_scraping(self, company_name: str, source_type: str) -> object | None:
+    def ai_web_scraping(self, company_name: str, variable: str) -> object | None:
         """Generate and safely execute AI scraping code."""
-        prompt = self.prompt_generator.generate_web_scraping_prompt(company_name, source_type)
+        prompt = self.prompt_generator.generate_web_scraping_prompt(company_name, variable)
         response = self.prompt_generator.call(prompt)
 
         if response is None or not hasattr(response, "text") or not response.text:
@@ -91,7 +91,7 @@ class WebScraperModule:
 
         code_text = re.sub(r"^```(?:python)?|```$", "", response.text.strip(), flags=re.MULTILINE)
         Path("generated_code").mkdir(parents=True, exist_ok=True)
-        code_file_path = Path("generated_code") / f"{company_name}_{source_type}.py"
+        code_file_path = Path("generated_code") / f"{company_name}_{variable}.py"
 
         try:
             save_code(code_text, code_file_path)
@@ -125,7 +125,7 @@ class WebScraperModule:
         else:
             return response.status_code in (403, 404)
 
-    def scrape_financial_sources(self, company_name: str, source_type: str) -> Any:
+    def scrape_financial_sources(self, company_name: str, variable: str) -> Any:
         """Try to find financial sources using prompt tuning, fall back to AI scraping."""
         attempt = 0
         cleaned_response = None
@@ -134,10 +134,10 @@ class WebScraperModule:
             try:
                 if attempt == 0:
                     logger.info("Attempting to fetch website for '%s'", company_name)
-                    raw_response = self.find_company_website_with_ai(company_name)
+                    raw_response = self.find_company_website_with_ai(company_name, variable)
                 else:
                     logger.info("Retrying with tuned prompt (%d/%d)", attempt, self.max_retries)
-                    improved_prompt = self.prompt_tuner.improve_prompt(url, company_name)
+                    improved_prompt = self.prompt_tuner.improve_prompt(url, company_name,variable)
                     tuned_response = self.prompt_tuner.call(improved_prompt)
                     raw_response = tuned_response.text.strip() if tuned_response else None
 
@@ -165,7 +165,7 @@ class WebScraperModule:
         attempt_web_scraping = 0
         while attempt_web_scraping < self.max_retries:
             logger.info("Attempting AI web scraping for '%s' (attempt %d)", company_name, attempt_web_scraping + 1)
-            data = self.ai_web_scraping(company_name, source_type)
+            data = self.ai_web_scraping(company_name, variable)
             if data is None:
                 logger.warning("AI web scraping failed for '%s' on attempt %d", company_name, attempt_web_scraping + 1)
                 attempt_web_scraping += 1

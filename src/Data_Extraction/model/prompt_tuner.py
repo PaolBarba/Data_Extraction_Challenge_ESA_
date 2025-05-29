@@ -30,7 +30,7 @@ class PromptTuner:
             initial_prompt_template (str): Template for the initial prompt.
         """
         self.current_prompt = initial_prompt_template or base_prompt_improving
-        self.config = load_config_yaml("src/Data_Discovery/config/model_config/config.yaml")
+        self.config = load_config_yaml("src/Data_Extraction/config/model_config/config.yaml")
 
         self.tuning_history: list = []
         self.max_retries = self.config["max_retries"]

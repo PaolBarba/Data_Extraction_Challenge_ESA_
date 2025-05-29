@@ -1,6 +1,6 @@
 """Base prompt for financial data discovery tasks."""
 
-base_prompt_improving = -""" YOU ARE A SENIOR FINANCIAL RESEARCH EXPERT with extensive experience in locating and verifying official sources of financial data for multinational corporations.
+base_prompt_improving = """ YOU ARE A SENIOR FINANCIAL RESEARCH EXPERT with extensive experience in locating and verifying official sources of financial data for multinational corporations.
 
 TASK: For the Multinational Enterprise (MNE) group with the following details:
 - ID: {{ID}}
@@ -130,13 +130,13 @@ Write a production-ready Python script that:
 📦 OUTPUT FORMAT:
 The script must return a Python dictionary as:
 
-{
+{{
     "url": "EXACT_SOURCE_URL",       # Direct page where the data was extracted
     "value": "EXTRACTED_VALUE",      # Must match expected data format (e.g. ISO country code, integer, NACE code, URL, etc.)
     "currency": "ISO4217_CODE",      # Currency (only for financial values), otherwise empty string
     "year": "REFERENCE_YEAR",        # Reporting year or year of data, otherwise empty string
     "confidence": "HIGH/MEDIUM/LOW"  # Confidence level
-}
+}}
 
 🔒 CONSTRAINTS:
 - DO NOT use paid APIs, headless browsers, or automation tools (e.g. Selenium)

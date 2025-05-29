@@ -11,7 +11,7 @@ from google.api_core.exceptions import ResourceExhausted
 from google.generativeai.types import generation_types
 from utils import load_config_yaml
 
-from Data_Extraction.prompts.base_prompt import base_prompt_template, web_scraping_prompt
+from prompts.base_prompt import base_prompt_template, web_scraping_prompt
 
 # Configurazione logging
 logging.basicConfig(
@@ -27,7 +27,7 @@ class PromptGenerator:
 
     def __init__(self):
         """Inizialize the prompt generator."""
-        self.config = load_config_yaml("src/Data_Discovery/config/model_config/config.yaml")
+        self.config = load_config_yaml("src/Data_Extraction/config/model_config/config.yaml")
         # Base prompt template for generating the initial prompt
         self.base_prompt_template = base_prompt_template
 
@@ -437,9 +437,9 @@ class PromptGenerator:
 
         return None  # No info found for this company
 
-    def generate_web_scraping_prompt(self, company_name: str, source_type: str) -> str:
+    def generate_web_scraping_prompt(self, company_name: str, variable: str) -> str:
         """Generate a web scraping prompt based on the company name and source type."""
-        return self.web_scraping_prompt_template.format(company_name=company_name, source_type=source_type)
+        return self.web_scraping_prompt_template.format(company_name=company_name, variable=variable)
 
     def call(self, prompt: str) -> generation_types.GenerateContentResponse | None:
         """ "Call the model with retry logic for handling quota issues."""  # noqa: D210
