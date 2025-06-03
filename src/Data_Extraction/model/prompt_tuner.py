@@ -56,21 +56,28 @@ class PromptTuner:
         """
         return self.current_prompt.format(company_name=company_name, source_type=source_type)
 
-    def improve_prompt(self, report_url, company_name):
+    def improve_prompt(self, report_url, company_name, variable):
         """Improves the current prompt using feedback from Gemini.
-
+    
         Args:
+            report_url (str): URL of the report
             company_name (str): Name of the company
-            source_type (str): Type of financial source
-            scraping_result (dict): Result of the web scraping
-            validation_result (dict): Result of the validation
-
+            variable (str): Variable to extract (COUNTRY, EMPLOYEES, TURNOVER, etc.)
+    
         Returns
         -------
             str: New improved prompt
         """
-        # Improves the current prompt using feedback from Gemini
-        return improve_prompt.format(report_url=report_url, company_name=company_name)
+        # Modifichiamo il template per includere la variabile da estrarre
+        improved_template = improve_prompt.format(
+            report_url=report_url, 
+            company_name=company_name
+        )
+        
+        # Aggiungiamo informazioni sulla variabile specifica da estrarre
+        improved_template += f"\n\nSpecifically, we are looking for the {variable} information for this company."
+        
+        return improved_template
 
     def call(self, prompt: str) -> generation_types.GenerateContentResponse | None:
         """Call the model with the given prompt and handle retries for quota errors."""

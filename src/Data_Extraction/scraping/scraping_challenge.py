@@ -69,15 +69,24 @@ class WebScraperModule:
         session.mount("https://", adapter)
         return session
 
-    def find_company_website_with_ai(self, company_name: str) -> str | None:
-        """Use AI to find the official website of a company."""
+    def find_company_website_with_ai(self, company_name: str, variable: str) -> str | None:
+        """Use AI to find the official website of a company and extract specific variable information.
+        
+        Args:
+            company_name (str): Name of the company
+            variable (str): Variable to extract (COUNTRY, EMPLOYEES, TURNOVER, etc.)
+        
+        Returns:
+            str | None: URL of the company's website or None if not found
+        """
         try:
-            prompt = self.prompt_generator.generate_prompt(company_name, source_type="Annual Report")
+            # Utilizziamo variable per personalizzare il prompt in base al tipo di dato da estrarre
+            prompt = self.prompt_generator.generate_prompt(company_name, source_type=f"Annual Report for {variable}")
             response = self.prompt_generator.call(prompt)
             if response and response.text:
                 return response.text.strip()
         except Exception:
-            logger.exception("AI failed to find company website")
+            logger.exception(f"AI failed to find company website for {variable} extraction")
         return None
 
     def ai_web_scraping(self, company_name: str, variable: str) -> object | None:

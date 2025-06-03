@@ -142,7 +142,8 @@ The script must return a Python dictionary as:
 - DO NOT use paid APIs, headless browsers, or automation tools (e.g. Selenium)
 - Use only publicly accessible and reliable sources
 - Ensure:
-  - Clean, modular code with inline comments
+  - Clean, modular code with Python-compliant inline comments (use '#' for single-line comments).
+  - All string literals must be correctly terminated (e.g., using matching single or double quotes). Be careful with special characters within strings; escape them if necessary.
   - Robust exception handling
   - Accuracy, traceability, and timeliness of data
 

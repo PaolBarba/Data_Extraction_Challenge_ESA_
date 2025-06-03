@@ -18,13 +18,13 @@ def load_config_yaml(config_path: str) -> dict[str, Any]:
     -------
         dict: Configuration data as a dictionary.
     """
-    with Path.open(config_path, "r") as file:
+    with Path(config_path).open("r") as file:
         return yaml.safe_load(file)
 
 
 def load_json_obj(file_path: str) -> dict:
     """Load a JSON object from a file."""
-    with Path.open(file_path, "r") as f:
+    with Path(file_path).open("r") as f:
         return json.load(f)
 
 
@@ -36,7 +36,7 @@ def save_json_obj(obj: dict, file_path: str) -> None:
         obj (dict): The object to save.
         file_path (str): The path to the file where the object will be saved.
     """
-    with Path.open(file_path, "w") as f:
+    with Path(file_path).open("w") as f:
         # Prepare the data to save
         json.dump(obj, f, indent=4)
 
