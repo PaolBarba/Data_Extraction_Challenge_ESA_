@@ -86,21 +86,6 @@ class WebScraperModule:
             logger.warning("Errore durante il download della pagina %s: %s", url, e)
             raise  # The retry decorator will handle the retry logic
 
-    def find_company_website_with_ai(self, company_name: str) -> str | None:
-        """
-        Look for the official website of the company.
-
-        Args:
-            company_name (str): Name of the company
-
-        Returns
-        -------
-            str: URL of the company's website or None if not found
-        """
-        self.web_scraping_code = self.call(self.prompt, company_name)
-
-        return
-
     def find_company_website(self, company_name: str) -> str | None:
         """
         Look for the official website of the company.

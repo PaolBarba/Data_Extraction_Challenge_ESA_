@@ -35,12 +35,9 @@ class PromptTuner:
         self.tuning_history: list = []
         self.max_retries = self.config["max_retries"]
         self.models_name = self.config["models_name"]
-
-    def inizialize_model(self):
-        """Initialize the generative model for prompt tuning."""
         self.selected_model_name = secrets.choice(self.models_name)
-        logger.info("Selected model: %s", self.selected_model_name)
         self.model = genai.GenerativeModel(self.selected_model_name)
+        logger.info("Selected model: %s", self.selected_model_name)
 
     def generate_prompt(self, company_name: str, source_type: str) -> str:
         """
@@ -82,7 +79,6 @@ class PromptTuner:
     def call(self, prompt: str) -> generation_types.GenerateContentResponse | None:
         """Call the model with the given prompt and handle retries for quota errors."""
         retries = 0
-        self.inizialize_model()
         while retries < self.max_retries:
             response = None
             try:

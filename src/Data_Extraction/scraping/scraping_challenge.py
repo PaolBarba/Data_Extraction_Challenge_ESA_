@@ -143,7 +143,6 @@ class WebScraperModule:
             try:
                 logger.info("Attempting to fetch website for '%s'", company_name)
                 raw_response = self.find_company_website_with_ai(company_name, variable)
-                # TODO: Prompt Optimization in case of empty response
 
                 if not raw_response:
                     attempt += 1
