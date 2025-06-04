@@ -182,4 +182,7 @@ class WebScraperModule:
 
         if not data:
             return None, None, None, None, "Page not found"
+        if len(data) < 5:
+            logger.error("Incomplete data returned from AI web scraping for '%s'", company_name)
+            return None, None, None, None, "Incomplete data"
         return tuple(data.values())

@@ -50,10 +50,10 @@ INSTRUCTIONS:
 
 
 1. You have to return a JSON object with the following keys:
-- "url": The exact URL of the source where the data was extracted.
-- "value": The extracted value for the variable, formatted correctly (e.g., ISO country code, integer, NACE code, URL).
-- "currency": The ISO 4217 currency code if applicable, otherwise an empty string.
-- "year": The reporting year or year of data, otherwise an empty string.
+- "url": The source URL of information, which must be a direct link to the page where the data was extracted.
+- "value": The financial value extracted from the source, formatted according to the variable type (e.g., ISO country code, integer, NACE code, URL). Must be provided as a full integer number.
+- "currency": The currency in ISO 4217 format (e.g., USD, EUR) if applicable, otherwise an empty string.
+- "year": The reporting year or year of data, formatted as YYYY, otherwise an empty string.
 """
 
 web_scraping_prompt = """
@@ -99,8 +99,8 @@ The script must return a Python dictionary as:
 
 {{
     "url": "EXACT_SOURCE_URL",       # Direct page where the data was extracted
-    "value": "EXTRACTED_VALUE",      # Must match expected data format (e.g. ISO country code, integer, NACE code, URL, etc.)
-    "currency": "ISO4217_CODE",      # Currency (only for financial values), otherwise empty string
+    "value": "EXTRACTED_VALUE",      # the extracted financial data, must be a full integer number
+    "currency": "ISO4217_CODE",      # the currency when applicable
     "year": "REFERENCE_YEAR",        # Reporting year or year of data, otherwise empty string
 }}
 
