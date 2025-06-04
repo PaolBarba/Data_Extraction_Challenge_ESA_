@@ -9,7 +9,7 @@ from urllib.parse import urlparse
 import google.generativeai as genai
 from google.api_core.exceptions import ResourceExhausted
 from google.generativeai.types import generation_types
-from prompts.base_prompt import base_prompt_template, web_scraping_prompt
+from prompts.base_prompt import base_prompt_template, web_scraping_prompt, base_prompt_improving
 from utils import load_config_yaml
 
 # Configurazione logging
@@ -29,7 +29,7 @@ class PromptGenerator:
         self.config = load_config_yaml("src/Data_Extraction/config/model_config/config.yaml")
         # Base prompt template for generating the initial prompt
         self.base_prompt_template = base_prompt_template
-
+        self.improve_prompt_template = base_prompt_improving
         # Dictionary to store company-specific prompts
         self.company_specific_prompts = {}
         self.web_scraping_prompt_template = web_scraping_prompt
@@ -71,7 +71,7 @@ class PromptGenerator:
         # Generate the final prompt
         return self.base_prompt_template.format(company_name=company_name, variable=variable)
 
-    def optimize_prompt(self, company_name: str, feedback: dict, current_prompt: str, scraping_results: tuple) -> str:
+    def improve_prompt(self, company_name: str, feedback: dict, current_prompt: str, scraping_results: tuple) -> str:
         """
         Optimize the prompt based on feedback and scraping results.
 
@@ -85,18 +85,11 @@ class PromptGenerator:
         -------
             str: Prompt ottimizzato
         """
-        # Increment the optimization counter for the company
-        if company_name not in self.optimization_counter:
-            self.optimization_counter[company_name] = 0
-        self.optimization_counter[company_name] += 1
+        
 
-        # Limit the number of optimizations to 5 attempts
-        if self.optimization_counter[company_name] > 5:
-            logger.warning("Reached max optimization attempts for %s, using scraping results", company_name)
-            return self._generate_scraping_based_prompt(company_name, scraping_results)
-
+        
         # Generate the optimization request
-        optimization_request = self._create_optimization_request(company_name, feedback, current_prompt, scraping_results)
+        optimization_request = self._create_optimization_request(company_name, feedback, scraping_results)
 
         try:
             response = self.model.generate_content(
@@ -135,44 +128,8 @@ class PromptGenerator:
 
     def _create_optimization_request(self, company_name, feedback, current_prompt, scraping_results):
         """Create the request for optimization of the prompt."""
-        scraping_info = ""
-        if scraping_results:
-            url, year, desc, conf = scraping_results
-            scraping_info = f"""
-            Web scraping found the following information:
-            - URL: {url if url else 'Not found'}
-            - Year: {year if year else 'Not found'}
-            - Source type: {desc if desc else 'Not identified'}
-            - Confidence: {conf}
-            """
-
-        return f"""
-        YOU ARE AN EXPERT IN PROMPT ENGINEERING specializing in optimizing prompts for artificial intelligence systems.
-
-        TASK: Optimize the existing prompt to improve the search for financial data for the company "{company_name}".
-
-        FEEDBACK FROM THE LAST ATTEMPT:
-        - Identified issues: {feedback.get('problems', 'No data found or validated')}
-        - Suggestions: {feedback.get('suggestions', 'N/A')}
-        - Critical points: {feedback.get('critical_points', 'N/A')}
-
-        {scraping_info}
-
-        CURRENT PROMPT:
-        ```
-        {current_prompt}
-        ```
-
-        INSTRUCTIONS FOR OPTIMIZATION:
-        1. Maintain the general structure of the prompt
-        2. Add specific instructions to address the identified issues
-        3. Improve the precision of requests to obtain direct URLs to documents
-        4. Ensure the prompt explicitly requests the correct fiscal year
-        5. Strengthen search priorities based on the type of source requested
-
-        RETURN ONLY THE NEW OPTIMIZED PROMPT, WITHOUT ADDITIONAL EXPLANATIONS OR COMMENTS.
-        """
-
+        pass
+        
     def _generate_scraping_based_prompt(self, company_name: str, scraping_results: str) -> str:
         """Generate a prompt based on scraping results when optimization fails."""
         if not scraping_results or not any(scraping_results):

@@ -136,17 +136,37 @@ class WebScraperModule:
 
     def scrape_financial_sources(self, company_name: str, variable: str) -> Any:
         """Try to find financial sources using prompt tuning, fall back to AI scraping."""
+        # First try with AI-based website finding and prompt improvement
+        result = self.find_company_website_with_ai_and_improve(company_name, variable)
+        if result:
+            return result
+            
+        # If that fails, fall back to AI web scraping
+        return self.ai_web_scraping_with_retries(company_name, variable)
+
+    def find_company_website_with_ai_and_improve(self, company_name: str, variable: str) -> tuple | None:
+        """Find company website using AI with prompt improvement on failure.
+        
+        Args:
+            company_name (str): Name of the company
+            variable (str): Variable to extract
+            
+        Returns:
+            tuple | None: (url, value, currency, year, status) if successful, None if failed
+        """
         attempt = 0
-        cleaned_response = None
-        url = ""
         while attempt < self.max_retries:
             try:
                 logger.info("Attempting to fetch website for '%s'", company_name)
                 raw_response = self.find_company_website_with_ai(company_name, variable)
 
-                if not raw_response:
-                    attempt += 1
-                    continue
+                # TODO: Se non riceviamo una risposta, possiamo migliorare il prompt
+                # if not raw_response:
+                #     # Try to improve the prompt if we got no response
+                #     logger.info("No response received, attempting to improve prompt")
+                #     self.prompt_generator.improve_prompt(None, company_name, variable)
+                #     attempt += 1
+                #     continue
 
                 cleaned_response = re.sub(r"^```(?:json)?|```$", "", raw_response.strip(), flags=re.IGNORECASE)
                 data = json.loads(cleaned_response)
@@ -154,6 +174,8 @@ class WebScraperModule:
 
                 if not url or self.is_page_not_found(url):
                     logger.warning("Invalid or missing page for '%s' on attempt %d", company_name, attempt + 1)
+                    # TODO: Try to improve the prompt with the failed URL
+                    # self.prompt_generator.improve_prompt(url, company_name, variable)
                     attempt += 1
                     continue
 
@@ -164,6 +186,18 @@ class WebScraperModule:
                 logger.warning("Error parsing or processing response on attempt %d: %s", attempt + 1, e)
                 attempt += 1
 
+        return None
+
+    def ai_web_scraping_with_retries(self, company_name: str, variable: str) -> tuple | None:
+        """Attempt AI web scraping with retries.
+
+        Args:
+            company_name (str): Name of the company
+            variable (str): Variable to extract
+
+        Returns:
+            tuple | None: (url, value, currency, year, status) if successful, None if failed
+        """
         logger.info("Falling back to AI web scraping for '%s'", company_name)
         attempt_web_scraping = 0
         while attempt_web_scraping < self.max_retries:

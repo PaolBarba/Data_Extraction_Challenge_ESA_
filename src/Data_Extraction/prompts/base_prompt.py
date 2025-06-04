@@ -1,45 +1,8 @@
 """Base prompt for financial data discovery tasks."""
 
-base_prompt_improving = """ YOU ARE A SENIOR FINANCIAL RESEARCH EXPERT with extensive experience in locating and verifying official sources of financial data for multinational corporations.
 
-TASK: For the Multinational Enterprise (MNE) group with the following details:
-- ID: {{ID}}
-- NAME: {{NAME}}
-- VARIABLE of interest: {{VARIABLE}}
-
-Identify and provide the most authoritative, specific, and up-to-date source of financial data for this company, focused on the requested document type: {{source_type}} (e.g., annual report, quarterly earnings, sustainability report).
-
-DETAILED INSTRUCTIONS:
-1. Confirm the official corporate website of the company by verifying domain authenticity (e.g., corporate suffix, known trademarks).
-2. Navigate to the "Investor Relations" section or its closest equivalent (e.g., "Financial Reports", "SEC Filings").
-3. Locate the most recent official document matching the requested source_type.
-4. Ensure the document is published by the company, not a third party (avoid summaries, media outlets).
-5. Extract the direct URL to the document—preferably in downloadable PDF or equivalent format.
-6. Confirm the document is freely accessible (no login, subscription, or paywall required).
-7. Extract the VALUE of the specified VARIABLE.
-8. Identify the CURRENCY (if applicable).
-9. Determine the REFERENCE YEAR (REFYEAR) of the report based on fiscal year or publication metadata.
-10. Assess your confidence level in the reliability of the source.
-
-OUTPUT FORMAT (strict JSON):
-{{
-  "ID": "{{ID}}",
-  "NAME": "{{NAME}}",
-  "VARIABLE": "{{VARIABLE}}",
-  "VALUE": "Extracted financial value as found in the document",
-  "CURRENCY": "Currency in which the value is reported, if applicable",
-  "REFYEAR": "Fiscal year of the data (format: YYYY)",
-  "SRC": "Direct URL to the official financial document (PDF or equivalent)",
-  "confidence": "HIGH / MEDIUM / LOW",
-  "notes": "Concise rationale explaining your source selection and any relevant observations"
-}}
-
-IMPORTANT NOTES:
-- Prioritize documents hosted directly on the official corporate domain.
-- Avoid URLs requiring authentication or redirecting to unverified domains.
-- If the exact source_type or VARIABLE is unavailable, clearly indicate this and provide the closest verified equivalent.
-- Maintain professional tone, source accuracy, and data integrity.
-"""  # noqa: E501
+# TODO: Continua il prompt per migliorare la ricerca di fonti finanziarie
+base_prompt_improving = """You are a FINANCIAL DATA EXPERT tasked with improving the prompt for finding financial data sources.""" 
 
 base_prompt_template = """
 YOU ARE A FINANCIAL RESEARCH EXPERT specializing in locating authoritative and official financial data sources for multinational companies.
