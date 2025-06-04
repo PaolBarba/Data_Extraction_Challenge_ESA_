@@ -44,53 +44,18 @@ IMPORTANT NOTES:
 base_prompt_template = """
 YOU ARE A FINANCIAL RESEARCH EXPERT specializing in locating authoritative and official financial data sources for multinational companies.
 
-TASK: Identify the most authoritative, specific, and up-to-date financial data source for "{company_name}" (requested source type: {source_type}).
+TASK: Identify the most authoritative, specific, and up-to-date financial data source for "{company_name}" targeting the variable {variable}.
 
 INSTRUCTIONS:
 
-1. URL SELECTION
-- Provide the MOST SPECIFIC URL directly linking to the page or document containing the latest financial data.
-- Avoid generic URLs such as the company homepage or broad IR landing pages.
-- Prioritize URLs pointing to specific financial statements, reports, or filings over general pages.
-- Prefer official Investor Relations (IR) pages over aggregators or search engines.
-- For U.S. companies, SEC filings (10-K, 10-Q) are IDEAL; for EU companies, ESEF/XBRL reports are preferred.
-- PDF or XBRL documents are HIGHLY PREFERRED over HTML pages.
 
-2. REFERENCE YEAR
-- Identify the fiscal/reporting year of the financial data, NOT the publication year.
-- Choose the MOST RECENT period available (annual or quarterly).
-- Use numeric year format, e.g., "2023" or "2023-2024".
-
-3. SOURCE PRIORITY (based on {source_type}):
-
-- Annual Report: IR website > SEC filings > official PDFs > financial databases
-- Consolidated: official consolidated documents > IR website > financial databases
-- Quarterly: official quarterly reports > IR website > financial databases
-- Other types: IR website > official documents > reliable financial databases
-
-4. PRIORITIZATION OVERALL:
-Official IR page > Specific document/report > Financial database > Aggregator
-
-5. CONFIDENCE ASSESSMENT
-- HIGH: Direct official documents/reports from IR or regulator with clear recent fiscal year.
-- MEDIUM: Reliable financial databases or aggregated sources with recent data.
-- LOW: Indirect, outdated, or generic sources.
-
-RESPONSE FORMAT:
-
-Return a JSON object ONLY, with EXACT fields and no extra text or commentary:
-
-{{
-    "url": "EXACT_SOURCE_URL",
-    "year": "REFERENCE_YEAR",
-    "confidence": "HIGH/MEDIUM/LOW",
-    "source_type": "{source_type}"
-}}
-
-{optimization_instructions}
-
-IMPORTANT: If multiple sources are found, select ONLY the best one according to the above criteria. Accuracy and relevance are critical.
+1. You have to return a JSON object with the following keys:
+- "url": The exact URL of the source where the data was extracted.
+- "value": The extracted value for the variable, formatted correctly (e.g., ISO country code, integer, NACE code, URL).
+- "currency": The ISO 4217 currency code if applicable, otherwise an empty string.
+- "year": The reporting year or year of data, otherwise an empty string.
 """
+
 web_scraping_prompt = """
 ROLE:
 You are a SENIOR FINANCIAL DATA ANALYST and TECHNICAL WEB SCRAPING ENGINEER. Your expertise lies in locating, extracting, and verifying official financial and corporate information for multinational enterprise (MNE) groups. Your task supports the compilation of structured datasets for global MNE analysis.
@@ -121,6 +86,8 @@ Write a production-ready Python script that:
 🧠 INTELLIGENCE AND STRUCTURE:
 - Use BeautifulSoup for HTML parsing
 - Use requests with a 5-second timeout
+- Use retry logic for network errors
+- Use Error handling to manage exceptions, the code must not crash on errors
 - Prioritize:
   - Official IR websites
   - Government or regulatory filings (e.g. SEC EDGAR, national registries)
@@ -135,7 +102,6 @@ The script must return a Python dictionary as:
     "value": "EXTRACTED_VALUE",      # Must match expected data format (e.g. ISO country code, integer, NACE code, URL, etc.)
     "currency": "ISO4217_CODE",      # Currency (only for financial values), otherwise empty string
     "year": "REFERENCE_YEAR",        # Reporting year or year of data, otherwise empty string
-    "confidence": "HIGH/MEDIUM/LOW"  # Confidence level
 }}
 
 🔒 CONSTRAINTS:
@@ -146,6 +112,7 @@ The script must return a Python dictionary as:
   - All string literals must be correctly terminated (e.g., using matching single or double quotes). Be careful with special characters within strings; escape them if necessary.
   - Robust exception handling
   - Accuracy, traceability, and timeliness of data
+  - The code must be executable, do not include explanations or comments outside the code block.
 
 🚀 EXECUTION REQUIREMENT:
 The script must run directly via:

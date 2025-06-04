@@ -72,10 +72,7 @@ class FinancialSourcesFinder:
         -------
             dict: Final result with URL, yaear, and metadata.
         """
+        url, value, currency, refyear, page_status = self.scraper.scrape_financial_sources(company_name, variable)
 
 
-        url, year, confidence, source_description, page_status = self.scraper.scrape_financial_sources(company_name, variable)
-
-
-        return url, year, confidence, source_description, page_status
-      # TODO
+        return url, value, currency, refyear, page_status

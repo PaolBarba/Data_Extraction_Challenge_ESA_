@@ -9,9 +9,8 @@ from urllib.parse import urlparse
 import google.generativeai as genai
 from google.api_core.exceptions import ResourceExhausted
 from google.generativeai.types import generation_types
-from utils import load_config_yaml
-
 from prompts.base_prompt import base_prompt_template, web_scraping_prompt
+from utils import load_config_yaml
 
 # Configurazione logging
 logging.basicConfig(
@@ -50,7 +49,7 @@ class PromptGenerator:
         logger.info("Selected model: %s", self.selected_model_name)
         self.model = genai.GenerativeModel(self.selected_model_name)
 
-    def generate_prompt(self, company_name: str, source_type: str) -> str:
+    def generate_prompt(self, company_name: str, variable: str) -> str:
         """
         Generate the prompt for the given company name and source type.
 
@@ -70,7 +69,7 @@ class PromptGenerator:
             optimization_text += f"\n\nAdditioanl Information: {company_info}"
 
         # Generate the final prompt
-        return self.base_prompt_template.format(company_name=company_name, source_type=source_type, optimization_instructions=optimization_text)
+        return self.base_prompt_template.format(company_name=company_name, variable=variable)
 
     def optimize_prompt(self, company_name: str, feedback: dict, current_prompt: str, scraping_results: tuple) -> str:
         """

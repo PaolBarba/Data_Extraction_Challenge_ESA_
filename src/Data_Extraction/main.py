@@ -56,12 +56,38 @@ def main():
         variable = row.VARIABLE
         logger.info("Processing company: %s for the variable: %s", company_name, variable)
 
-        # Find the official website of the company
+        # Find the financial source
+        url, value, currency, refyear, page_status= finder.find_financial_source(company_name, variable)
+       # Generate reports for the company
+        report = {
+            "ID": row.ID,
+            "NAME": company_name,
+            "VARIABLE": variable,
+            "VALUE": value,
+            "CURRENCY": currency,
+            "REFYEAR": refyear,
+            "SRC": url,
+
+        }
+        # Save the report to a JSON file
         
-        url, year, confidence, source_description, page_status = finder.find_financial_source(company_name, variable)
-        df.at[row.Index, "VALUE"] = url
-        df.at[row.Index, "CURRENCY"] = None 
-        df.at[row.Index, "REFYEAR"] = year
+        report_dir = Path("reports")
+        report_dir.mkdir(parents=True, exist_ok=True)
+        report_path = report_dir / f"{company_name.replace(' ', '_')}_report.json"
+        # Append the new report to the JSON file
+        if report_path.exists():
+            with report_path.open("r", encoding="utf-8") as f:
+                data = json.load(f)
+            if isinstance(data, list):
+                data.append(report)
+            else:
+                data = [data, report]
+        else:
+            data = [report]
+        with report_path.open("w", encoding="utf-8") as f:
+            json.dump(data, f, indent=4)
+        logger.info("Report appended to %s", report_path)
+
 
 
 if __name__ == "__main__":

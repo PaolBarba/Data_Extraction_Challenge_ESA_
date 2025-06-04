@@ -81,7 +81,7 @@ class WebScraperModule:
         """
         try:
             # Utilizziamo variable per personalizzare il prompt in base al tipo di dato da estrarre
-            prompt = self.prompt_generator.generate_prompt(company_name, source_type=f"Annual Report for {variable}")
+            prompt = self.prompt_generator.generate_prompt(company_name, variable = variable)
             response = self.prompt_generator.call(prompt)
             if response and response.text:
                 return response.text.strip()
@@ -141,14 +141,9 @@ class WebScraperModule:
         url = ""
         while attempt < self.max_retries:
             try:
-                if attempt == 0:
-                    logger.info("Attempting to fetch website for '%s'", company_name)
-                    raw_response = self.find_company_website_with_ai(company_name, variable)
-                else:
-                    logger.info("Retrying with tuned prompt (%d/%d)", attempt, self.max_retries)
-                    improved_prompt = self.prompt_tuner.improve_prompt(url, company_name,variable)
-                    tuned_response = self.prompt_tuner.call(improved_prompt)
-                    raw_response = tuned_response.text.strip() if tuned_response else None
+                logger.info("Attempting to fetch website for '%s'", company_name)
+                raw_response = self.find_company_website_with_ai(company_name, variable)
+                # TODO: Prompt Optimization in case of empty response
 
                 if not raw_response:
                     attempt += 1
@@ -186,7 +181,5 @@ class WebScraperModule:
             attempt_web_scraping += 1
 
         if not data:
-            return None, None, None, None, "Page not found"
-        if len(data.values()) != 5:
             return None, None, None, None, "Page not found"
         return tuple(data.values())
