@@ -54,9 +54,18 @@ def main():
     for row in tqdm(df.itertuples()):
         company_name = row.NAME
         variable = row.VARIABLE
+        
+        # Find the financial source
+        report_dir = Path("reports")
+        report_path = report_dir / f"{company_name.replace(' ', '_')}_report.json"
+        if report_path.exists():
+            with report_path.open("r", encoding="utf-8") as f:
+                data = json.load(f)
+            if isinstance(data, list) and len(data) > 5:
+                logger.info("Skipping company %s as it already has more than five records.", company_name)
+                continue
         logger.info("Processing company: %s for the variable: %s", company_name, variable)
 
-        # Find the financial source
         url, value, currency, refyear, page_status= finder.find_financial_source(company_name, variable)
        # Generate reports for the company
         report = {
