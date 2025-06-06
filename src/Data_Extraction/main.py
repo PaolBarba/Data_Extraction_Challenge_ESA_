@@ -54,7 +54,8 @@ def main():
     for row in tqdm(df.itertuples()):
         company_name = row.NAME
         variable = row.VARIABLE
-        
+        company_name = company_name.replace("/", "_")
+
         # Find the financial source
         report_dir = Path("reports")
         report_path = report_dir / f"{company_name.replace(' ', '_')}_report.json"
@@ -98,6 +99,7 @@ def main():
                 data = [data, report]
         else:
             data = [report]
+        
         with report_path.open("w", encoding="utf-8") as f:
             json.dump(data, f, indent=4)
         logger.info("Report appended to %s", report_path)
