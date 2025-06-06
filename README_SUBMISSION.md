@@ -1,6 +1,6 @@
 # Data Extraction Challenge - ESA
 
-A modular pipeline for dataset discovery and submission, built for the European Space Agency's data challenge. This project integrates scraping, prompt engineering, model interaction, and a submission framework.
+A modular pipeline for dataset extraction and submission, built for the European Space Agency's data challenge. This project integrates scraping, prompt engineering, model interaction, and a submission framework.
 
 ---
 
@@ -8,9 +8,9 @@ A modular pipeline for dataset discovery and submission, built for the European 
 
 ```text
 
-Data_Discovery_Challenge_ESA_/
+data_extraction_Challenge_ESA_/
 ├── src/
-│   ├── Data_Discovery/
+│   ├── Data_Extraction/
 │   │   ├── cleaning/                   # Cleaning files
 │   │   │   ├── cleaning.py
 │   │   ├── config/                     # Configuration files
@@ -54,7 +54,7 @@ Data_Discovery_Challenge_ESA_/
 ├── .gitlab-ci.yml                      # GitLab CI/CD configuration
 ├── .pre-commit-config.yaml             # Pre-commit configuration
 ├── CONTRIBUTING.md                     # Contribution guidelines
-├── discovery_approach.docx             # Discovery approach documentation
+├── extraction_approach.docx            # extraction approach documentation
 ├── LICENSE                             # Project license
 ├── pyproject.toml                      # Project metadata and dependencies
 └── README.md                           # Project documentation
