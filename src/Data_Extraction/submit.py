@@ -1,11 +1,11 @@
 """Submission script for Data Discovery."""
 
-from Data_Extraction.submission.submission import DataDiscoverySubmission
+from submission.submission import DataExtractionSubmission
 
 
 def main() -> None:
     """Run the Data Discovery submission process."""
-    submission = DataDiscoverySubmission()
+    submission = DataExtractionSubmission()
     submission.run()
 
 

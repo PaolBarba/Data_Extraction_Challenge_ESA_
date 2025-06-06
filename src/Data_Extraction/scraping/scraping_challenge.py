@@ -186,7 +186,7 @@ class WebScraperModule:
                 logger.warning("Error parsing or processing response on attempt %d: %s", attempt + 1, e)
                 attempt += 1
 
-        return None
+        return None , None, None, None, "Page not found"
 
     def ai_web_scraping_with_retries(self, company_name: str, variable: str) -> tuple | None:
         """Attempt AI web scraping with retries.
@@ -217,5 +217,5 @@ class WebScraperModule:
             return None, None, None, None, "Page not found"
         if len(data) < 5:
             logger.error("Incomplete data returned from AI web scraping for '%s'", company_name)
-            return None, None, None, None, "Incomplete data"
+            return None, None, None, None, "Page not found"
         return tuple(data.values())

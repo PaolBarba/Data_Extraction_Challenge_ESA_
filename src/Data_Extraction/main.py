@@ -76,6 +76,8 @@ def main():
             "CURRENCY": currency,
             "REFYEAR": refyear,
             "SRC": url,
+            "Page Status": page_status,
+
 
         }
         # Save the report to a JSON file
@@ -87,6 +89,9 @@ def main():
         if report_path.exists():
             with report_path.open("r", encoding="utf-8") as f:
                 data = json.load(f)
+            if isinstance(data, list) and len(data) >= 6:
+                logger.info("Skipping company %s as it already has six or more records.", company_name)
+                continue
             if isinstance(data, list):
                 data.append(report)
             else:
